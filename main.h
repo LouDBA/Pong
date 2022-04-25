@@ -14,10 +14,10 @@ extern "C" {
 #define IMAGE_BUFFER_SIZE		640
 #define WIDTH_SLOPE				5
 #define MIN_LINE_WIDTH			40
-#define ROTATION_THRESHOLD		0
-#define ROTATION_COEFF			0
+#define SPEED_MIN				640.0f
+#define SPEED_MAX				1100.0f
 #define PXTOCM					1570.0f //experimental value
-#define GOAL_DISTANCE 			10.0f
+#define GOAL_DISTANCE_FOND		10.0f
 #define MAX_DISTANCE 			25.0f
 #define ERROR_THRESHOLD			0.1f	//[cm] because of the noise of the camera
 #define KP						500.0f

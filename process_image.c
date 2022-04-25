@@ -9,7 +9,7 @@
 #include <process_image.h>
 
 
-static float distance_cm = 0;
+static float distance_fond_cm = 0;
 static uint8_t imageRed[IMAGE_BUFFER_SIZE] = {0};
 static uint8_t imageBlue[IMAGE_BUFFER_SIZE] = {0};
 static char perdant = 'x'; // r = red, b = blue, x = none
@@ -29,7 +29,7 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	uint16_t i = 0, begin = 0, end = 0, width = 0;
 	uint8_t stop = 0, wrong_line = 0, line_not_found = 0;
 
-	static uint16_t last_width = PXTOCM/GOAL_DISTANCE;
+	static uint16_t last_width = PXTOCM/GOAL_DISTANCE_FOND;
 
 	do{
 		wrong_line = 0;
@@ -172,14 +172,16 @@ static THD_FUNCTION(ProcessImage, arg) {
 
 		//converts the width into a distance between the robot and the camera
 		if(lineWidth){
-			distance_cm = PXTOCM/lineWidth;
+			distance_fond_cm = PXTOCM/lineWidth;
+		} else {
+			distance_fond_cm = MAX_DISTANCE;
 		}
 
 	}
 }
 
-float get_distance_cm(void){
-	return distance_cm;
+float get_distance_fond_cm(void){
+	return distance_fond_cm;
 }
 
 char get_perdant(void){
