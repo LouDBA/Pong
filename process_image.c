@@ -15,7 +15,7 @@ static uint8_t imageBlue[IMAGE_BUFFER_SIZE] = {0};
 static char perdant = 'x'; // r = red, b = blue, x = none
 static uint8_t scoreRed = 0;
 static uint8_t scoreBlue = 0;
-
+static bool play = true;
 
 //semaphore
 static BSEMAPHORE_DECL(image_ready_sem, TRUE);
@@ -130,6 +130,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 	uint32_t meanRed = 0;
 	uint32_t meanBlue = 0;
 
+
 	while(1){
 		//waits until an image has been captured
 		chBSemWait(&image_ready_sem);
@@ -156,18 +157,10 @@ static THD_FUNCTION(ProcessImage, arg) {
 		meanBlue /= IMAGE_BUFFER_SIZE;
 
 		//search for a line in the image and gets its width in pixels
-		if (meanRed < meanBlue) {
-			perdant = 'b';
+		if(meanRed < meanBlue) {
 			lineWidth = extract_line_width(imageRed, meanRed);
-			if(lineWidth == 20) { // ajouter tolérance + ajouter un define avec la bonne valeur de taille de ligne, supp les trucs distance
-				++scoreRed;
-			}
 		} else {
-			perdant = 'r';
 			lineWidth = extract_line_width(imageBlue, meanBlue);
-			if(lineWidth == 20) { // ajouter tolérance + ajouter un define avec la bonne valeur de taille de ligne, supp les trucs distance
-				++scoreBlue;
-			}
 		}
 
 		//converts the width into a distance between the robot and the camera
@@ -177,6 +170,19 @@ static THD_FUNCTION(ProcessImage, arg) {
 			distance_fond_cm = MAX_DISTANCE;
 		}
 
+		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true)){
+			if(meanRed < meanBlue) {
+				perdant = 'b';
+				++scoreRed;
+			} else {
+				perdant = 'r';
+				++scoreBlue;
+			}
+			play = false;
+		}
+		if(distance_fond_cm > GOAL_DISTANCE_FOND){
+			play = true;
+		}
 	}
 }
 
@@ -196,6 +202,17 @@ uint8_t get_scoreBlue(void){
 	return scoreBlue;
 }
 
+//bool get_play(void){
+//	return play;
+//}
+
+void set_scoreRed(uint8_t score_rouge){
+	scoreRed = score_rouge;
+}
+
+void set_scoreBlue(uint8_t score_bleu){
+	scoreBlue = score_bleu;
+}
 
 void process_image_start(void){
 	chThdCreateStatic(waProcessImage, sizeof(waProcessImage), NORMALPRIO, ProcessImage, NULL);

@@ -6,6 +6,13 @@
 #include "ch.h"
 #include "hal.h"
 #include "memory_protection.h"
+
+
+#include <spi_comm.h>
+#include <audio/audio_thread.h>
+#include <audio/play_melody.h>
+
+
 #include <usbcfg.h>
 #include <main.h>
 #include <motors.h>
@@ -14,6 +21,9 @@
 
 #include <pi_regulator.h>
 #include <process_image.h>
+#include <jeu.h>
+
+
 
 void SendUint8ToComputer(uint8_t* data, uint16_t size) 
 {
@@ -50,10 +60,16 @@ int main(void)
 	po8030_start();
 	//inits the motors
 	motors_init();
+	//start the audio
+	dac_start();
+	// starts the rgb LEDs
+	spi_comm_start();
 
 	//stars the threads for the pi regulator and the processing of the image
 	pi_regulator_start();
 	process_image_start();
+	jeu_start();
+	playMelodyStart();
 
     /* Infinite loop. */
     while (1) {

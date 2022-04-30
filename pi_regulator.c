@@ -11,14 +11,12 @@
 #include <process_image.h>
 
 //gestion de la vitesse (de la caméra et autre fonction pour les capteurs ou tout dans celle la ?)
-int16_t speed_motors(float distance_fond, float goal){
+int16_t speed_motors(float distance_fond){
 	static float speed = 0;
-	if(distance_fond > goal){
+	if(distance_fond > GOAL_DISTANCE_FOND){
 		speed = SPEED_MAX;
-		palClearPad(GPIOB, GPIOB_LED_BODY);     //mettre dans jeu.c
 	} else {
 		speed = 0; //pour qu'il ne recule pas
-		palSetPad(GPIOB, GPIOB_LED_BODY);  	//mettre dans jeu.c
 	}
 	return (int16_t)speed;
 }
@@ -38,7 +36,7 @@ static THD_FUNCTION(PiRegulator, arg) {
 
 		//computes the speed to give to the motors
 		//distance_cm is modified by the image processing thread
-		speed = speed_motors(get_distance_fond_cm(), GOAL_DISTANCE_FOND);
+		speed = speed_motors(get_distance_fond_cm());
 
 
 		//applies the speed from the PI regulator and the correction for the rotation

@@ -4,6 +4,6 @@
 
 
 
-
+void jeu_start(void);
 
 #endif /* JEU_H_ */
