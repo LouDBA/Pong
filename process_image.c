@@ -202,9 +202,9 @@ uint8_t get_scoreBlue(void){
 	return scoreBlue;
 }
 
-//bool get_play(void){
-//	return play;
-//}
+bool get_play(void){
+	return play;
+}
 
 void set_scoreRed(uint8_t score_rouge){
 	scoreRed = score_rouge;

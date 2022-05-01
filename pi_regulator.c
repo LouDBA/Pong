@@ -11,15 +11,6 @@
 #include <process_image.h>
 
 //gestion de la vitesse (de la caméra et autre fonction pour les capteurs ou tout dans celle la ?)
-int16_t speed_motors(float distance_fond){
-	static float speed = 0;
-	if(distance_fond > GOAL_DISTANCE_FOND){
-		speed = SPEED_MAX;
-	} else {
-		speed = 0; //pour qu'il ne recule pas
-	}
-	return (int16_t)speed;
-}
 
 static THD_WORKING_AREA(waPiRegulator, 256);
 static THD_FUNCTION(PiRegulator, arg) {
@@ -36,8 +27,11 @@ static THD_FUNCTION(PiRegulator, arg) {
 
 		//computes the speed to give to the motors
 		//distance_cm is modified by the image processing thread
-		speed = speed_motors(get_distance_fond_cm());
-
+		if(get_play() == true){
+			speed = SPEED_MAX;
+		} else {
+			speed = 0;
+		}
 
 		//applies the speed from the PI regulator and the correction for the rotation
 		right_motor_set_speed(speed);
