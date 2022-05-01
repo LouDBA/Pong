@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
 #include "ch.h"
 #include "hal.h"
 #include "memory_protection.h"
@@ -18,10 +17,18 @@
 #include <motors.h>
 #include <camera/po8030.h>
 #include <chprintf.h>
+#include <sensors/proximity.h>
+#include <msgbus/messagebus.h>
+#include <i2c_bus.h>
 
 #include <pi_regulator.h>
 #include <process_image.h>
 #include <jeu.h>
+#include <capteur_ir.h>
+
+messagebus_t bus;
+MUTEX_DECL(bus_lock);
+CONDVAR_DECL(bus_condvar);
 
 
 
@@ -64,13 +71,21 @@ int main(void)
 	dac_start();
 	// starts the rgb LEDs
 	spi_comm_start();
+	//start proximity sensors
+    proximity_start();
+	i2c_start();
+	messagebus_init(&bus, &bus_lock, &bus_condvar);
+
 
 	//stars the threads for the pi regulator and the processing of the image
 	pi_regulator_start();
 	process_image_start();
 	jeu_start();
 	playMelodyStart();
+	capteur_ir_start();
 
+	//calibrate the ir capteurs
+	calibrate_ir();
     /* Infinite loop. */
     while (1) {
     	//waits 1 second
