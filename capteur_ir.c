@@ -8,16 +8,12 @@
 
 #include <main.h>
 #include <sensors/proximity.h>
-#include <leds.h>
-#include <motors.h>
 
 #include <capteur_ir.h>
 
 
-static char cote_ir = 'a';
+static char cote_ir = 'a';//
 
-
-static BSEMAPHORE_DECL(capteur_ir_ready_sem, TRUE);
 
 static THD_WORKING_AREA(waCapteurIR, 128);
 static THD_FUNCTION(CapteurIR, arg) {
@@ -46,17 +42,16 @@ static THD_FUNCTION(CapteurIR, arg) {
 
 		if(ir6_value > 60)
 		{
-			cote_ir = 'g';
+			cote_ir = 'g'; //gauche 45°
 		}
 		if(ir1_value > 60)
 		{
-			cote_ir = 'd';
+			cote_ir = 'd'; //droite 45°
 		}
 		if((ir6_value < 60) && (ir1_value < 60))
 		{
-			cote_ir = 'a';
+			cote_ir = 'a';//aucun
 		}
-		chBSemSignal(&capteur_ir_ready_sem);
 
 		//100Hz
 		chThdSleepUntilWindowed(time, time + MS2ST(10));
@@ -64,50 +59,11 @@ static THD_FUNCTION(CapteurIR, arg) {
 }
 
 
-static THD_WORKING_AREA(waProcessIR, 128);
-static THD_FUNCTION(ProcessIR, arg) {
-
-	chRegSetThreadName(__FUNCTION__);
-	(void)arg;
-
-
-	while(1){
-		//waits until an image has been captured
-		chBSemWait(&capteur_ir_ready_sem);
-
-		switch(cote_ir)
-		{
-		case 'a' :
-			left_motor_set_speed(MOTOR_SPEED_LIMIT);
-			right_motor_set_speed(MOTOR_SPEED_LIMIT);
-			set_body_led(0);
-			set_front_led(1);
-			break;
-		case 'd' :
-			left_motor_set_speed(-MOTOR_SPEED_LIMIT);
-			right_motor_set_speed(MOTOR_SPEED_LIMIT);
-			set_body_led(1);
-			set_front_led(0);
-			break;
-		case 'g' :
-			left_motor_set_speed(MOTOR_SPEED_LIMIT);
-			right_motor_set_speed(-MOTOR_SPEED_LIMIT);
-			set_body_led(1);
-			set_front_led(0);
-			break;
-		default :
-			left_motor_set_speed(0);
-			right_motor_set_speed(0);
-			set_body_led(0);
-			set_front_led(1);
-		}
-	}
-
+char get_cote_ir(void){
+	return(cote_ir);
 }
-
 
 void capteur_ir_start(void){
 	chThdCreateStatic(waCapteurIR, sizeof(waCapteurIR), NORMALPRIO, CapteurIR, NULL);
-	chThdCreateStatic(waProcessIR, sizeof(waProcessIR), NORMALPRIO, ProcessIR, NULL);
 }
 

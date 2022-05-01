@@ -69,8 +69,19 @@ static THD_FUNCTION(Jeu, arg) {
 			set_led(LED3, 1);
 			set_led(LED5, 1);
 			set_led(LED7, 1);
-			//playMelody(WE_ARE_THE_CHAMPIONS, ML_FORCE_CHANGE, NULL);
-			//blink pdt 5 sec
+			//playMelody(MARIO_START, ML_FORCE_CHANGE, NULL);
+			for(int i = 0 ; i < 11 ; ++i){
+				set_led(LED1, 2);
+				set_led(LED3, 2);
+				set_led(LED5, 2);
+				set_led(LED7, 2);
+				chThdSleepMilliseconds(500);
+			}
+			score_rouge = 0;
+			set_scoreRed(score_rouge);
+			score_bleu = 0;
+			set_scoreBlue(score_bleu);
+
 			//retour au milieu du plateau
 			break;
 
@@ -118,9 +129,21 @@ static THD_FUNCTION(Jeu, arg) {
 			set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
 			set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
 			set_rgb_led(LED8, 0, 0, RGB_MAX_INTENSITY);
-			//playMelody(STARWARS, ML_FORCE_CHANGE, NULL);
+			//playMelody(MARIO, ML_FORCE_CHANGE, NULL);
+			for(int i = 0 ; i < 11 ; ++i){
+				toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);
+				toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);
+				toggle_rgb_led(LED6, BLUE_LED, RGB_MAX_INTENSITY);
+				toggle_rgb_led(LED8, BLUE_LED, RGB_MAX_INTENSITY);
+
+				chThdSleepMilliseconds(500);
+			}
+			score_rouge = 0;
+			set_scoreRed(score_rouge);
+			score_bleu = 0;
+			set_scoreBlue(score_bleu);
 			//retour milieu
-			break; // directement remettre le score à 0 ? Mettre un wait ? Faire clignoter toutes les LEDs pdt 5 secondes puis score_rouge = score_bleu = 0
+			break;
 
 			// operator doesn't match any case
 		default:

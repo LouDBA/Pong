@@ -179,6 +179,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 				++scoreBlue;
 			}
 			play = false;
+
 		}
 		if(distance_fond_cm > GOAL_DISTANCE_FOND){
 			play = true;

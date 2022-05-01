@@ -4,5 +4,5 @@
 
 //start
 void capteur_ir_start(void);
-
+char get_cote_ir(void);
 #endif /* CAPTEUR_IR_H_ */
