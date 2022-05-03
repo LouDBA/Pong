@@ -29,7 +29,7 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	uint16_t i = 0, begin = 0, end = 0, width = 0;
 	uint8_t stop = 0, wrong_line = 0, line_not_found = 0;
 
-	static uint16_t last_width = PXTOCM/GOAL_DISTANCE_FOND;
+	//static uint16_t last_width = PXTOCM/GOAL_DISTANCE_FOND;
 
 	do{
 		wrong_line = 0;
@@ -83,13 +83,13 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	if(line_not_found){
 		begin = 0;
 		end = 0;
-		width = last_width;
+		width = PXTOCM/MAX_DISTANCE;
 	}else{
-		last_width = width = (end - begin);
+		width = (end - begin);
 	}
 
 	//sets a maximum width or returns the measured width
-	if((PXTOCM/width) > MAX_DISTANCE){
+	if((PXTOCM/width) >= MAX_DISTANCE){
 		return PXTOCM/MAX_DISTANCE;
 	}else{
 		return width;
@@ -129,7 +129,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 	uint16_t lineWidth = 0;
 	uint32_t meanRed = 0;
 	uint32_t meanBlue = 0;
-
+	static uint8_t winb = 0, winr = 0;
 
 	while(1){
 		//waits until an image has been captured
@@ -163,26 +163,32 @@ static THD_FUNCTION(ProcessImage, arg) {
 			lineWidth = extract_line_width(imageBlue, meanBlue);
 		}
 
-		//converts the width into a distance between the robot and the camera
-		if(lineWidth){
-			distance_fond_cm = PXTOCM/lineWidth;
-		} else {
-			distance_fond_cm = MAX_DISTANCE;
-		}
+		distance_fond_cm = PXTOCM/lineWidth;
 
 		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true)){
 			if(meanRed < meanBlue) {
-				perdant = 'b';
-				++scoreRed;
+				winb = 0;
+				++winr;
+				if(winr == 5)
+				{
+					perdant ='b';
+					++scoreRed;
+					winr = 0;
+					play = false;
+				}
 			} else {
-				perdant = 'r';
-				++scoreBlue;
+				winr = 0;
+				++winb;
+				if(winb == 5)
+				{
+					perdant ='r';
+					++scoreBlue;
+					winb = 0;
+					play = false;
+				}
 			}
-			play = false;
-
-		}
-		if(distance_fond_cm > GOAL_DISTANCE_FOND){
-			play = true;
+		} else {
+			winb = winr = 0;
 		}
 	}
 }
@@ -205,6 +211,11 @@ uint8_t get_scoreBlue(void){
 
 bool get_play(void){
 	return play;
+}
+
+void set_play(bool partie){
+	play = partie;
+	return;
 }
 
 void set_scoreRed(uint8_t score_rouge){

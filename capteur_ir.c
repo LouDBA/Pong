@@ -31,7 +31,7 @@ static THD_FUNCTION(CapteurIR, arg) {
 	while(1){
 		time = chVTGetSystemTime();
 		++calibrage;
-		if(calibrage > 99)
+		if(calibrage > 199)
 		{
 			calibrage = 0;
 			calibrate_ir();
@@ -40,15 +40,15 @@ static THD_FUNCTION(CapteurIR, arg) {
 		ir1_value = get_prox(1);
 		ir6_value = get_prox(6);
 
-		if(ir6_value > 60)
+		if(ir6_value > IR_DETECT_VALUE)
 		{
 			cote_ir = 'g'; //gauche 45°
 		}
-		if(ir1_value > 60)
+		if(ir1_value > IR_DETECT_VALUE)
 		{
 			cote_ir = 'd'; //droite 45°
 		}
-		if((ir6_value < 60) && (ir1_value < 60))
+		if((ir6_value < IR_DETECT_VALUE) && (ir1_value < IR_DETECT_VALUE))
 		{
 			cote_ir = 'a';//aucun
 		}
