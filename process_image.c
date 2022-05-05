@@ -139,7 +139,6 @@ static THD_FUNCTION(ProcessImage, arg) {
 
 		//Extracts only the red pixels
 		for(uint16_t i = 0 ; i < (2 * IMAGE_BUFFER_SIZE) ; i+=2){
-			// rajouter des if > a une certaine valeur -> perdant = rouge
 			//extracts first 5bits of the first byte
 			//takes nothing from the second byte
 			imageRed[i/2] = (uint8_t)(img_buff_ptr[i]&0xF8)/8; //red pixels

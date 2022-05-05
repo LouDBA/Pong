@@ -25,7 +25,7 @@ static THD_FUNCTION(CapteurIR, arg) {
 
 	uint8_t calibrage = 0;
 
-	int ir6_value = 0 , ir1_value = 0;
+	int ir6_value = 0 , ir1_value = 0, ir5_value = 0;
 
 
 	while(1){
@@ -39,6 +39,7 @@ static THD_FUNCTION(CapteurIR, arg) {
 
 		ir1_value = get_prox(1);
 		ir6_value = get_prox(6);
+		ir5_value = get_prox(5);
 
 		if(ir6_value > IR_DETECT_VALUE)
 		{
@@ -48,7 +49,12 @@ static THD_FUNCTION(CapteurIR, arg) {
 		{
 			cote_ir = 'd'; //droite 45Â°
 		}
-		if((ir6_value < IR_DETECT_VALUE) && (ir1_value < IR_DETECT_VALUE))
+		//raj le capteur gauche toute
+		if(ir5_value > IR_DETECT_VALUE)
+		{
+			cote_ir = 'f'; //gauche 90°
+		}
+		if((ir6_value < IR_DETECT_VALUE) && (ir1_value < IR_DETECT_VALUE) && (ir5_value < IR_DETECT_VALUE))
 		{
 			cote_ir = 'a';//aucun
 		}
