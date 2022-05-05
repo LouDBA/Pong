@@ -69,7 +69,7 @@ static THD_FUNCTION(Jeu, arg) {
 			set_led(LED3, 1);
 			set_led(LED5, 1);
 			set_led(LED7, 1);
-			playMelody(MARIO_START, ML_FORCE_CHANGE, NULL);
+			//playMelody(MARIO_START, ML_FORCE_CHANGE, NULL);
 			for(int i = 0 ; i < 11 ; ++i){
 				set_led(LED1, 2);
 				set_led(LED3, 2);
@@ -129,7 +129,7 @@ static THD_FUNCTION(Jeu, arg) {
 			set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
 			set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
 			set_rgb_led(LED8, 0, 0, RGB_MAX_INTENSITY);
-			playMelody(MARIO, ML_FORCE_CHANGE, NULL);
+			//playMelody(MARIO, ML_FORCE_CHANGE, NULL);
 			for(int i = 0 ; i < 11 ; ++i){
 				toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);
 				toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);

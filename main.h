@@ -20,7 +20,7 @@ extern "C" {
 #define GOAL_DISTANCE_FOND		10.0f
 #define MAX_DISTANCE 			20.0f
 #define ERROR_THRESHOLD			0.1f	//[cm] because of the noise of the camera
-#define IR_DETECT_VALUE			110		//valeur a laquelle les capteur se triggers
+#define IR_DETECT_VALUE			512	//valeur a laquelle les capteur se triggers
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;

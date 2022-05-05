@@ -23,34 +23,42 @@ static THD_FUNCTION(CapteurIR, arg) {
 
 	systime_t time;
 
-	uint8_t calibrage = 0;
-
-	int ir6_value = 0 , ir1_value = 0;
-
+	unsigned int ir_value[8];
+	calibrate_ir();
 
 	while(1){
 		time = chVTGetSystemTime();
-		++calibrage;
-		if(calibrage > 199)
+		for(unsigned int i = 0; i<8; i++)
 		{
-			calibrage = 0;
-			calibrate_ir();
+			ir_value[i] = get_prox(i);
 		}
 
-		ir1_value = get_prox(1);
-		ir6_value = get_prox(6);
-
-		if(ir6_value > IR_DETECT_VALUE)
+		if(ir_value[6] > IR_DETECT_VALUE)
 		{
-			cote_ir = 'g'; //gauche 45°
+			cote_ir = 'g'; //gauche activé
 		}
-		if(ir1_value > IR_DETECT_VALUE)
+		if(ir_value[1] > IR_DETECT_VALUE)
 		{
 			cote_ir = 'd'; //droite 45°
 		}
-		if((ir6_value < IR_DETECT_VALUE) && (ir1_value < IR_DETECT_VALUE))
+		if((ir_value[0] > ir_value[7]) && (ir_value[0] > IR_DETECT_VALUE)
+				&& (ir_value[1] < IR_DETECT_VALUE))
+		{
+			cote_ir = 'u'; //legerement a droite
+		}
+		if ((ir_value[7] > ir_value[0]) && (ir_value[0] > IR_DETECT_VALUE)
+				&& (ir_value[6] < IR_DETECT_VALUE))
+		{
+			cote_ir = 'n'; //legerement a gauche
+		}
+		if((ir_value[1] < IR_DETECT_VALUE) && (ir_value[6] < IR_DETECT_VALUE)
+				&& (ir_value[0] < IR_DETECT_VALUE) && (ir_value[7] < IR_DETECT_VALUE))
 		{
 			cote_ir = 'a';//aucun
+		}
+		for(unsigned int i = 0; i < 7 ; i++)
+		{
+
 		}
 
 		//100Hz

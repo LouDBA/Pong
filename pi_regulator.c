@@ -41,8 +41,22 @@ static THD_FUNCTION(PiRegulator, arg) {
 			case 'd' :
 				speed_g = -MOTOR_SPEED_LIMIT;
 				speed_d = MOTOR_SPEED_LIMIT;
+				right_motor_set_speed(speed_d);
+				left_motor_set_speed(speed_g);
+				chThdSleepMilliseconds(350);
 				break;
 			case 'g' :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = -MOTOR_SPEED_LIMIT;
+				right_motor_set_speed(speed_d);
+				left_motor_set_speed(speed_g);
+				chThdSleepMilliseconds(350);
+				break;
+			case 'u' :
+				speed_g = -MOTOR_SPEED_LIMIT;
+				speed_d = MOTOR_SPEED_LIMIT;
+				break;
+			case 'n' :
 				speed_g = MOTOR_SPEED_LIMIT;
 				speed_d = -MOTOR_SPEED_LIMIT;
 				break;
@@ -50,18 +64,18 @@ static THD_FUNCTION(PiRegulator, arg) {
 				speed_g = 0;
 				speed_d = 0;
 			}
-		} else {
-			speed_g = 0;
-			speed_d = 0;
 			right_motor_set_speed(speed_d);
 			left_motor_set_speed(speed_g);
-			chThdSleepMilliseconds(5000);
+		} else {
+			//			speed_g = 0;
+			//			speed_d = 0;
+			//			right_motor_set_speed(speed_d);
+			//			left_motor_set_speed(speed_g);
+			//			chThdSleepMilliseconds(5000);
 			set_play(true);
 		}
 
 		//applies the speed from the PI regulator and the correction for the rotation
-		right_motor_set_speed(speed_d);
-		left_motor_set_speed(speed_g);
 		//100Hz
 		chThdSleepUntilWindowed(time, time + MS2ST(10));
 	}
