@@ -102,8 +102,8 @@ static THD_FUNCTION(CaptureImage, arg) {
 	chRegSetThreadName(__FUNCTION__);
 	(void)arg;
 
-	//Takes pixels 0 to IMAGE_BUFFER_SIZE of the line 10 + 11 (minimum 2 lines because reasons)
-	po8030_advanced_config(FORMAT_RGB565, 0, 10, IMAGE_BUFFER_SIZE, 2, SUBSAMPLING_X1, SUBSAMPLING_X1);
+	//Takes pixels 0 to IMAGE_BUFFER_SIZE of the line 300 + 301 (minimum 2 lines because reasons)
+	po8030_advanced_config(FORMAT_RGB565, 0, 300, IMAGE_BUFFER_SIZE, 2, SUBSAMPLING_X1, SUBSAMPLING_X1);
 	dcmi_enable_double_buffering();
 	dcmi_set_capture_mode(CAPTURE_ONE_SHOT);
 	dcmi_prepare();
@@ -129,12 +129,12 @@ static THD_FUNCTION(ProcessImage, arg) {
 	uint16_t lineWidth = 0;
 	uint32_t meanRed = 0;
 	uint32_t meanBlue = 0;
-	static uint8_t winb = 0, winr = 0;
+	bool send_to_computer = true;
 
 	while(1){
 		//waits until an image has been captured
 		chBSemWait(&image_ready_sem);
-		//gets the pointer to the array filled with the last image in RGB565    
+		//gets the pointer to the array filled with the last image in RGB565
 		img_buff_ptr = dcmi_get_last_image_ptr();
 
 		//Extracts only the red pixels
@@ -146,6 +146,13 @@ static THD_FUNCTION(ProcessImage, arg) {
 			//takes nothing from the first byte
 			imageBlue[i/2] =  (uint8_t)img_buff_ptr[i+1]&0x1F; //blue
 		}
+
+		if(send_to_computer){
+			//sends to the computer the image
+			SendUint8ToComputer(imageRed, IMAGE_BUFFER_SIZE);
+		}
+		//invert the bool
+		send_to_computer = !send_to_computer;
 
 		//performs an average
 		for(uint16_t i = 0 ; i < IMAGE_BUFFER_SIZE ; i++){
@@ -166,28 +173,16 @@ static THD_FUNCTION(ProcessImage, arg) {
 
 		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true)){
 			if(meanRed < meanBlue) {
-				winb = 0;
-				++winr;
-				if(winr == 5)
-				{
-					perdant ='b';
-					++scoreRed;
-					winr = 0;
-					play = false;
-				}
+				perdant ='b';
+				++scoreRed;
+				play = false;
 			} else {
-				winr = 0;
-				++winb;
-				if(winb == 5)
-				{
-					perdant ='r';
-					++scoreBlue;
-					winb = 0;
-					play = false;
-				}
+
+				perdant ='r';
+				++scoreBlue;
+				play = false;
+
 			}
-		} else {
-			winb = winr = 0;
 		}
 	}
 }

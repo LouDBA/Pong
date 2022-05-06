@@ -14,6 +14,8 @@ CSRC += ./main.c \
 		./process_image.c \
 		./capteur_ir.c\
 		./jeu.c \
+		./accelerometer.c \
+		
 #Header folders to include
 INCDIR += 
 

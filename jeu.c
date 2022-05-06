@@ -12,6 +12,7 @@
 #include <pi_regulator.h>
 #include <process_image.h>
 #include <jeu.h>
+#include <accelerometer.h>
 // vérifier les include
 
 
@@ -27,9 +28,16 @@ static THD_FUNCTION(Jeu, arg) {
 
 	while(1){
 		time = chVTGetSystemTime();
-		score_rouge = get_scoreRed();
-		score_bleu = get_scoreBlue();
 
+//		if(get_panique()) {
+//			score_rouge = 0;
+//			set_scoreRed(score_rouge);
+//			score_bleu = 0;
+//			set_scoreBlue(score_bleu);
+//		} else {
+			score_rouge = get_scoreRed();
+			score_bleu = get_scoreBlue();
+//		}
 		//retour milieu
 		switch(score_rouge)
 		{
@@ -150,6 +158,7 @@ static THD_FUNCTION(Jeu, arg) {
 			score_bleu = 0;
 			set_scoreBlue(score_bleu);
 		}
+
 
 		//100Hz
 		chThdSleepUntilWindowed(time, time + MS2ST(10));
