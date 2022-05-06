@@ -12,7 +12,6 @@
 static float distance_fond_cm = 0;
 static uint8_t imageRed[IMAGE_BUFFER_SIZE] = {0};
 static uint8_t imageBlue[IMAGE_BUFFER_SIZE] = {0};
-static char perdant = 'x'; // r = red, b = blue, x = none
 static uint8_t scoreRed = 0;
 static uint8_t scoreBlue = 0;
 static bool play = true;
@@ -177,7 +176,6 @@ static THD_FUNCTION(ProcessImage, arg) {
 				++winr;
 				if(winr == 2)
 				{
-					perdant ='b';
 					++scoreRed;
 					winr = 0;
 					play = false;
@@ -188,7 +186,6 @@ static THD_FUNCTION(ProcessImage, arg) {
 				++winb;
 				if(winb == 2)
 				{
-					perdant ='r';
 					++scoreBlue;
 					winb = 0;
 					play = false;
@@ -202,10 +199,6 @@ static THD_FUNCTION(ProcessImage, arg) {
 
 float get_distance_fond_cm(void){
 	return distance_fond_cm;
-}
-
-char get_perdant(void){
-	return perdant;
 }
 
 uint8_t get_scoreRed(void){

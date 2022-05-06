@@ -2,7 +2,6 @@
 #define PROCESS_IMAGE_H
 
 float get_distance_fond_cm(void);
-char get_perdant(void);
 uint8_t get_scoreRed(void);
 uint8_t get_scoreBlue(void);
 bool get_play(void);

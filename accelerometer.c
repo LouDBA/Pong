@@ -24,7 +24,6 @@ void show_gravity(imu_msg_t *imu_values){
 		panique = true;
 	} else {
 		panique = false;
-		set_play(true);
 	}
 }
 
