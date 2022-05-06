@@ -27,6 +27,8 @@ static THD_FUNCTION(CapteurIR, arg) {
 	bool wall = false;
 	while(1){
 		time = chVTGetSystemTime();
+		wall = false;
+		for(unsigned int i = 0; i<8; i++)
 		{
 			ir_value[i] = get_prox(i);
 			if(ir_value[i] > IR_DETECT_VALUE)

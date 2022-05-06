@@ -129,6 +129,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 	uint32_t meanRed = 0;
 	uint32_t meanBlue = 0;
 	bool send_to_computer = true;
+	static uint8_t winb = 0, winr = 0;
 
 	while(1){
 		//waits until an image has been captured
@@ -172,16 +173,29 @@ static THD_FUNCTION(ProcessImage, arg) {
 
 		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true)){
 			if(meanRed < meanBlue) {
-				perdant ='b';
-				++scoreRed;
-				play = false;
+				winb = 0;
+				++winr;
+				if(winr == 2)
+				{
+					perdant ='b';
+					++scoreRed;
+					winr = 0;
+					play = false;
+				}
 			} else {
 
-				perdant ='r';
-				++scoreBlue;
-				play = false;
-
+				winr = 0;
+				++winb;
+				if(winb == 2)
+				{
+					perdant ='r';
+					++scoreBlue;
+					winb = 0;
+					play = false;
+				}
 			}
+		} else {
+			winb = winr = 0;
 		}
 	}
 }

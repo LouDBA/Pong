@@ -92,7 +92,7 @@ static THD_FUNCTION(PiRegulator, arg) {
 
 				speed_g = MOTOR_SPEED_LIMIT;
 				speed_d = MOTOR_SPEED_LIMIT;
-				while(side_ir == 'a') { // on le fait avancer jusqu'a ce qu'un capteur s'active
+				while(side_ir == AUCUN) { // on le fait avancer jusqu'a ce qu'un capteur s'active
 					side_ir = get_cote_ir();
 					right_motor_set_speed(speed_d);
 					left_motor_set_speed(speed_g);
@@ -101,7 +101,7 @@ static THD_FUNCTION(PiRegulator, arg) {
 				// quand un capteur de distance s'active on le fait tourner sur la droite jusqu'a ce que le capteur de gauche complet s'active
 				speed_g = MOTOR_SPEED_LIMIT;
 				speed_d = -MOTOR_SPEED_LIMIT;
-				while(side_ir != 'f') { // remplacer g car avant g = avant gauche et nous on veut gauche toute
+				while(side_ir != GAUCHE) {
 					side_ir = get_cote_ir();
 					right_motor_set_speed(speed_d);
 					left_motor_set_speed(speed_g);

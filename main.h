@@ -17,7 +17,7 @@ extern "C" {
 #define SPEED_MIN				640.0f
 #define SPEED_MAX				1100.0f
 #define PXTOCM					1570.0f //experimental value
-#define GOAL_DISTANCE_FOND		10.0f	// [cm]
+#define GOAL_DISTANCE_FOND		15.0f	// [cm]
 #define MAX_DISTANCE 			25.0f	// [cm]
 //#define ERROR_THRESHOLD			0.1f	// [cm] because of the noise of the camera
 #define IR_DETECT_VALUE			512		// valeur a laquelle les capteur se triggers
