@@ -20,7 +20,7 @@ extern "C" {
 #define GOAL_DISTANCE_FOND		10.0f	// [cm]
 #define MAX_DISTANCE 			25.0f	// [cm]
 //#define ERROR_THRESHOLD			0.1f	// [cm] because of the noise of the camera
-#define IR_DETECT_VALUE			110		// valeur a laquelle les capteur se triggers
+#define IR_DETECT_VALUE			512		// valeur a laquelle les capteur se triggers
 #define PLATEAU_LENGTH			56 	// [cm]
 #define THRESHOLD_IMU			0.2f
 #define NB_SAMPLES_OFFSET    	200

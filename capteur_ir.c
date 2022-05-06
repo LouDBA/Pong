@@ -12,8 +12,7 @@
 #include <capteur_ir.h>
 
 
-static char cote_ir = 'a';//
-
+static int cote_ir = 0;//
 
 static THD_WORKING_AREA(waCapteurIR, 128);
 static THD_FUNCTION(CapteurIR, arg) {
@@ -23,40 +22,47 @@ static THD_FUNCTION(CapteurIR, arg) {
 
 	systime_t time;
 
-	uint8_t calibrage = 0;
-
-	int ir6_value = 0 , ir1_value = 0, ir5_value = 0;
-
-
+	unsigned int ir_value[8];
+	calibrate_ir();
+	bool wall = false;
 	while(1){
 		time = chVTGetSystemTime();
-		++calibrage;
-		if(calibrage > 199)
 		{
-			calibrage = 0;
-			calibrate_ir();
+			ir_value[i] = get_prox(i);
+			if(ir_value[i] > IR_DETECT_VALUE)
+			{
+				wall = true;
+			}
 		}
-
-		ir1_value = get_prox(1);
-		ir6_value = get_prox(6);
-		ir5_value = get_prox(5);
-
-		if(ir6_value > IR_DETECT_VALUE)
-		{
-			cote_ir = 'g'; //gauche 45째
-		}
-		if(ir1_value > IR_DETECT_VALUE)
-		{
-			cote_ir = 'd'; //droite 45째
-		}
-		//raj le capteur gauche toute
-		if(ir5_value > IR_DETECT_VALUE)
-		{
-			cote_ir = 'f'; //gauche 90�
-		}
-		if((ir6_value < IR_DETECT_VALUE) && (ir1_value < IR_DETECT_VALUE) && (ir5_value < IR_DETECT_VALUE))
-		{
-			cote_ir = 'a';//aucun
+		if((wall) && ((ir_value[3] < IR_DETECT_VALUE)) && (ir_value[4] < IR_DETECT_VALUE)){
+			if(ir_value[6] > IR_DETECT_VALUE)
+			{
+				cote_ir = GAUCHE_45;
+			}
+			if(ir_value[1] > IR_DETECT_VALUE)
+			{
+				cote_ir = DROIT_45;
+			}
+			if(ir_value[2] > IR_DETECT_VALUE)
+			{
+				cote_ir = DROIT; //droite 90째
+			}
+			if(ir_value[5] > IR_DETECT_VALUE)
+			{
+				cote_ir = GAUCHE; //gauche 90째
+			}
+			if((ir_value[0] > ir_value[7]) && (ir_value[0] > IR_DETECT_VALUE)
+					&& (ir_value[1] < IR_DETECT_VALUE))
+			{
+				cote_ir = DROIT_AV; //legerement a droite
+			}
+			if ((ir_value[7] > ir_value[0]) && (ir_value[7] > IR_DETECT_VALUE)
+					&& (ir_value[6] < IR_DETECT_VALUE))
+			{
+				cote_ir = GAUCHE_AV; //legerement a gauche
+			}
+		} else {
+			cote_ir = AUCUN;//aucun
 		}
 
 		//100Hz
@@ -65,7 +71,7 @@ static THD_FUNCTION(CapteurIR, arg) {
 }
 
 
-char get_cote_ir(void){
+int get_cote_ir(void){
 	return(cote_ir);
 }
 

@@ -29,7 +29,6 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	uint16_t i = 0, begin = 0, end = 0, width = 0;
 	uint8_t stop = 0, wrong_line = 0, line_not_found = 0;
 
-	//static uint16_t last_width = PXTOCM/GOAL_DISTANCE_FOND;
 
 	do{
 		wrong_line = 0;

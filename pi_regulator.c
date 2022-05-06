@@ -21,11 +21,10 @@ static THD_FUNCTION(PiRegulator, arg) {
 	(void)arg;
 
 	systime_t time;
-
-	char side_ir = 'a';
+	systime_t rot_time = 0;
+	int side_ir = 0;
 
 	int16_t speed_g = 0 , speed_d = 0;
-
 	while(1){
 		time = chVTGetSystemTime();
 
@@ -35,34 +34,60 @@ static THD_FUNCTION(PiRegulator, arg) {
 //			speed_d = 0;
 //		} else {
 
-
-			if(get_play() == true){
-				side_ir = get_cote_ir();
-				switch(side_ir)
-				{
-				case 'a' :
-					speed_g = MOTOR_SPEED_LIMIT;
-					speed_d = MOTOR_SPEED_LIMIT;
-					break;
-				case 'd' :
-					speed_g = -MOTOR_SPEED_LIMIT;
-					speed_d = MOTOR_SPEED_LIMIT;
-					break;
-				case 'g' :
-					speed_g = MOTOR_SPEED_LIMIT;
-					speed_d = -MOTOR_SPEED_LIMIT;
-					break;
-				case 'f' :
-					speed_g = MOTOR_SPEED_LIMIT;
-					speed_d = MOTOR_SPEED_LIMIT;
-					break;
-				default :
-					speed_g = 0;
-					speed_d = 0;
-				}
-			} else {
-
-
+		if(get_play() == true){
+			side_ir = get_cote_ir();
+			switch(side_ir)
+			{
+			case GAUCHE_AV :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = -MOTOR_SPEED_LIMIT;
+				rot_time = 325;
+				break;
+			case DROIT_AV :
+				speed_g = -MOTOR_SPEED_LIMIT;
+				speed_d = MOTOR_SPEED_LIMIT;
+				rot_time = 325;
+				break;
+			case GAUCHE_45 :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = -MOTOR_SPEED_LIMIT;
+				rot_time = 250;
+				break;
+			case DROIT_45 :
+				speed_g = -MOTOR_SPEED_LIMIT;
+				speed_d = MOTOR_SPEED_LIMIT;
+				rot_time = 250;
+				break;
+			case GAUCHE :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = -MOTOR_SPEED_LIMIT;
+				rot_time = 75;
+				break;
+			case DROIT :
+				speed_g = -MOTOR_SPEED_LIMIT;
+				speed_d = MOTOR_SPEED_LIMIT;
+				rot_time = 75;
+				break;
+			case GAUCHE_AR :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = -MOTOR_SPEED_LIMIT;
+				break;
+			case DROIT_AR :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = -MOTOR_SPEED_LIMIT;
+				break;
+			case AUCUN :
+				speed_g = MOTOR_SPEED_LIMIT;
+				speed_d = MOTOR_SPEED_LIMIT;
+				rot_time = 0;
+				break;
+			default :
+				speed_g = 0;
+				speed_d = 0;
+				rot_time = 0;
+			}
+		} else {
+			
 				//retour au milieu du plateau
 
 				speed_g = MOTOR_SPEED_LIMIT;
@@ -146,17 +171,19 @@ static THD_FUNCTION(PiRegulator, arg) {
 				//			chThdSleepMilliseconds(5000);
 
 				set_play(true);
-			}
-//		}
-
-		//applies the speed from the PI regulator and the correction for the rotation
+		}
 		right_motor_set_speed(speed_d);
 		left_motor_set_speed(speed_g);
 
-		//100Hz
-		chThdSleepUntilWindowed(time, time + MS2ST(10));
+
+		//Attente du temps de rotation
+
+
+		chThdSleepUntilWindowed(time,time + MS2ST(10) + MS2ST(rot_time));
+
 	}
 }
+
 
 void pi_regulator_start(void){
 	chThdCreateStatic(waPiRegulator, sizeof(waPiRegulator), NORMALPRIO, PiRegulator, NULL);
