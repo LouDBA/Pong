@@ -11,16 +11,17 @@
 #include <capteur_ir.h>
 #include <sensors/imu.h>
 
+#include <chprintf.h>
 
 
-
-static bool panique = true;
+static bool panique = false;
 
 
 void show_gravity(imu_msg_t *imu_values){
 	//create a pointer to the array for shorter name
 	float *accel = imu_values->acceleration;
-	if(fabs(accel[X_AXIS]) > THRESHOLD_IMU || fabs(accel[Y_AXIS]) > THRESHOLD_IMU){
+	chprintf((BaseSequentialStream *) &SD3, "z_accel : %d\r\n", accel[X_AXIS]);
+	if(fabs(accel[X_AXIS]) > THRESHOLD_IMU || fabs(accel[Y_AXIS]) > THRESHOLD_IMU){ //rajouter des define dans main.h
 		panique = true;
 	} else {
 		panique = false;

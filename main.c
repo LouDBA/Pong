@@ -72,15 +72,16 @@ int main(void)
 	dac_start();
 	// starts the rgb LEDs
 	spi_comm_start();
-	//start proximity sensors
-	proximity_start();
-	i2c_start();
 
-	//start gyroscope
-//	imu_start();
+	i2c_start();
 
 	/** Inits the Inter Process Communication bus. */
 	messagebus_init(&bus, &bus_lock, &bus_condvar);
+	//start gyroscope
+	imu_start();
+	//start proximity sensors
+	proximity_start();
+
 
 
 
@@ -90,12 +91,12 @@ int main(void)
 	jeu_start();
 	playMelodyStart();
 	capteur_ir_start();
-//	accelerometer_start();
+	accelerometer_start();
 
 	//calibrate the ir capteurs
 	calibrate_ir();
 
-//	calibrate_gyro();
+	calibrate_gyro();
 
 	/* Infinite loop. */
 	while (1) {

@@ -29,136 +29,148 @@ static THD_FUNCTION(Jeu, arg) {
 	while(1){
 		time = chVTGetSystemTime();
 		// si on le lève il panique, réinitialise tout et allume toutes les LEDs en rouge
-		//		if(get_panique()) {
-		//			score_rouge = 0;
-		//			set_scoreRed(score_rouge);
-		//			score_bleu = 0;
-		//			set_scoreBlue(score_bleu);
-		//		set_led(LED1, 1);
-		//		set_led(LED3, 1);
-		//		set_led(LED5, 1);
-		//		set_led(LED7, 1);
-		//		set_play(true);
-		//		set_rgb_led(LED2, RGB_MAX_INTENSITY, 0, 0);
-		//		set_rgb_led(LED4, RGB_MAX_INTENSITY, 0, 0);
-		//		set_rgb_led(LED6, RGB_MAX_INTENSITY, 0, 0);
-		//		set_rgb_led(LED8, RGB_MAX_INTENSITY, 0, 0);
-
-
-		//		} else {
-		score_rouge = get_scoreRed();
-		score_bleu = get_scoreBlue();
-
-		//retour milieu
-		switch(score_rouge)
-		{
-		case 0:
+		if(get_panique()) {
+			score_rouge = 0;
+			set_scoreRed(score_rouge);
+			score_bleu = 0;
+			set_scoreBlue(score_bleu);
 			set_led(LED1, 0);
 			set_led(LED3, 0);
 			set_led(LED5, 0);
 			set_led(LED7, 0);
-			break;
-
-		case 1:
-			set_led(LED1, 1);
-			set_led(LED3, 0);
-			set_led(LED5, 0);
-			set_led(LED7, 0);
-			break;
-
-		case 2:
-			set_led(LED1, 1);
-			set_led(LED3, 1);
-			set_led(LED5, 0);
-			set_led(LED7, 0);
-			break;
-
-		case 3:
-			set_led(LED1, 1);
-			set_led(LED3, 1);
-			set_led(LED5, 1);
-			set_led(LED7, 0);
-			break;
-		case 4:
-			set_led(LED1, 1);
-			set_led(LED3, 1);
-			set_led(LED5, 1);
-			set_led(LED7, 1);
-			//playMelody(MARIO_START, ML_FORCE_CHANGE, NULL);
-			for(int i = 0 ; i < 11 ; ++i){
+			set_rgb_led(LED2, 0,  0, 0);
+			set_rgb_led(LED4, 0,  0, 0);
+			set_rgb_led(LED6, 0,  0, 0);
+			set_rgb_led(LED8, 0,  0, 0);
+			//playMelody(SIMPSON, ML_FORCE_CHANGE, NULL);
+			while (get_panique()) {
 				set_led(LED1, 2);
 				set_led(LED3, 2);
 				set_led(LED5, 2);
 				set_led(LED7, 2);
-				chThdSleepMilliseconds(500);
+				toggle_rgb_led(LED2, RED_LED, RGB_MAX_INTENSITY);
+				toggle_rgb_led(LED4, RED_LED, RGB_MAX_INTENSITY);
+				toggle_rgb_led(LED6, RED_LED, RGB_MAX_INTENSITY);
+				toggle_rgb_led(LED8, RED_LED, RGB_MAX_INTENSITY);
+				chThdSleepMilliseconds(300);
 			}
-			score_rouge = 0;
-			set_scoreRed(score_rouge);
-			score_bleu = 0;
-			set_scoreBlue(score_bleu);
-			break;
+			//stopCurrentMelody();
+			set_play(true);
 
-			// operator doesn't match any case
-		default:
-			score_rouge = 0;
-			set_scoreRed(score_rouge);
-		}
+		} else {
+			score_rouge = get_scoreRed();
+			score_bleu = get_scoreBlue();
 
-		switch(score_bleu)
-		{
-		case 0:
-			set_rgb_led(LED2, 0, 0, 0);
-			set_rgb_led(LED4, 0, 0, 0);
-			set_rgb_led(LED6, 0, 0, 0);
-			set_rgb_led(LED8, 0, 0, 0);
-			break;
+			//retour milieu
+			switch(score_rouge)
+			{
+			case 0:
+				set_led(LED1, 0);
+				set_led(LED3, 0);
+				set_led(LED5, 0);
+				set_led(LED7, 0);
+				break;
 
-		case 1:
-			set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED4, 0, 0, 0);
-			set_rgb_led(LED6, 0, 0, 0);
-			set_rgb_led(LED8, 0, 0, 0);
-			break;
+			case 1:
+				set_led(LED1, 1);
+				set_led(LED3, 0);
+				set_led(LED5, 0);
+				set_led(LED7, 0);
+				break;
 
-		case 2:
-			set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED6, 0, 0, 0);
-			set_rgb_led(LED8, 0, 0, 0);
-			break;
+			case 2:
+				set_led(LED1, 1);
+				set_led(LED3, 1);
+				set_led(LED5, 0);
+				set_led(LED7, 0);
+				break;
 
-		case 3:
-			set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED8, 0, 0, 0);
-			break;
-		case 4:
-			set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
-			set_rgb_led(LED8, 0, 0, RGB_MAX_INTENSITY);
-			//playMelody(MARIO, ML_FORCE_CHANGE, NULL);
-			for(int i = 0 ; i < 11 ; ++i){
-				toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);
-				toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);
-				toggle_rgb_led(LED6, BLUE_LED, RGB_MAX_INTENSITY);
-				toggle_rgb_led(LED8, BLUE_LED, RGB_MAX_INTENSITY);
+			case 3:
+				set_led(LED1, 1);
+				set_led(LED3, 1);
+				set_led(LED5, 1);
+				set_led(LED7, 0);
+				break;
+			case 4:
+				set_led(LED1, 1);
+				set_led(LED3, 1);
+				set_led(LED5, 1);
+				set_led(LED7, 1);
+				//playMelody(MARIO_START, ML_FORCE_CHANGE, NULL);
+				for(int i = 0 ; i < 7 ; ++i){
+					set_led(LED1, 2);
+					set_led(LED3, 2);
+					set_led(LED5, 2);
+					set_led(LED7, 2);
+					chThdSleepMilliseconds(300);
+				}
+				score_rouge = 0;
+				set_scoreRed(score_rouge);
+				score_bleu = 0;
+				set_scoreBlue(score_bleu);
+				break;
 
-				chThdSleepMilliseconds(500);
+				// operator doesn't match any case
+			default:
+				score_rouge = 0;
+				set_scoreRed(score_rouge);
 			}
-			score_rouge = 0;
-			set_scoreRed(score_rouge);
-			score_bleu = 0;
-			set_scoreBlue(score_bleu);
-			break;
 
-			// operator doesn't match any case
-		default:
-			score_bleu = 0;
-			set_scoreBlue(score_bleu);
+			switch(score_bleu)
+			{
+			case 0:
+				set_rgb_led(LED2, 0, 0, 0);
+				set_rgb_led(LED4, 0, 0, 0);
+				set_rgb_led(LED6, 0, 0, 0);
+				set_rgb_led(LED8, 0, 0, 0);
+				break;
+
+			case 1:
+				set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED4, 0, 0, 0);
+				set_rgb_led(LED6, 0, 0, 0);
+				set_rgb_led(LED8, 0, 0, 0);
+				break;
+
+			case 2:
+				set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED6, 0, 0, 0);
+				set_rgb_led(LED8, 0, 0, 0);
+				break;
+
+			case 3:
+				set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED8, 0, 0, 0);
+				break;
+			case 4:
+				set_rgb_led(LED2, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
+				set_rgb_led(LED8, 0, 0, RGB_MAX_INTENSITY);
+				//playMelody(MARIO, ML_FORCE_CHANGE, NULL);
+				for(int i = 0 ; i < 7 ; ++i){
+					toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);
+					toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);
+					toggle_rgb_led(LED6, BLUE_LED, RGB_MAX_INTENSITY);
+					toggle_rgb_led(LED8, BLUE_LED, RGB_MAX_INTENSITY);
+
+					chThdSleepMilliseconds(300);
+				}
+				score_rouge = 0;
+				set_scoreRed(score_rouge);
+				score_bleu = 0;
+				set_scoreBlue(score_bleu);
+				break;
+
+				// operator doesn't match any case
+			default:
+				score_bleu = 0;
+				set_scoreBlue(score_bleu);
+			}
 		}
-		//		}
 
 		//100Hz
 		chThdSleepUntilWindowed(time, time + MS2ST(10));
