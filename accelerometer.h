@@ -6,7 +6,7 @@
 
 void accelerometer_start(void);
 
-bool get_panique(void);
+bool get_robotLeve(void);
 
 
 #endif /* ACCELEROMETER_H_ */

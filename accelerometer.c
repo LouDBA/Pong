@@ -6,15 +6,15 @@
 
 
 #include <main.h>
-#include <pi_regulator.h>
 #include <process_image.h>
 #include <capteur_ir.h>
 #include <sensors/imu.h>
 
 #include <chprintf.h>
+#include "gestionmoteurs.h"
 
 
-static bool panique = false;
+static bool robotLeve = false;
 static float accelZStart = 0;
 
 void show_gravity(imu_msg_t *imu_values){
@@ -23,9 +23,9 @@ void show_gravity(imu_msg_t *imu_values){
 	float random = accel[Z_AXIS];
 	//chprintf((BaseSequentialStream *) &SD3, "z_accel : %f\r\n",random );
 	if((fabs(accel[Z_AXIS]) < (GRAVITYG - THRESHOLD_IMU)) || (fabs(accel[Z_AXIS]) > (GRAVITYG + THRESHOLD_IMU))){ //rajouter des define dans main.h
-		panique = true;
+		robotLeve = true;
 	} else {
-		panique = false;
+		robotLeve = false;
 	}
 }
 
@@ -64,8 +64,8 @@ void accelerometer_start(void){
 	chThdCreateStatic(waAccelerometer, sizeof(waAccelerometer), NORMALPRIO, Accelerometer, NULL);
 }
 
-bool get_panique(void){
-	return panique;
+bool get_robotLeve(void){
+	return robotLeve;
 }
 
 

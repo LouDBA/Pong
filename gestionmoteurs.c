@@ -1,3 +1,5 @@
+#include "gestionmoteurs.h"
+
 #include "ch.h"
 #include "hal.h"
 #include <math.h>
@@ -7,15 +9,14 @@
 
 #include <main.h>
 #include <motors.h>
-#include <pi_regulator.h>
 #include <process_image.h>
 #include <capteur_ir.h>
 #include <accelerometer.h>
 
 //gestion de la vitesse (de la caméra et autre fonction pour les capteurs ou tout dans celle la ?)
 
-static THD_WORKING_AREA(waPiRegulator, 512);
-static THD_FUNCTION(PiRegulator, arg) {
+static THD_WORKING_AREA(waGestionMoteurs, 512);
+static THD_FUNCTION(GestionMoteurs, arg) {
 
 	chRegSetThreadName(__FUNCTION__);
 	(void)arg;
@@ -29,7 +30,7 @@ static THD_FUNCTION(PiRegulator, arg) {
 		time = chVTGetSystemTime();
 
 		//computes the speed to give to the motors
-		if(get_panique()) {
+		if(get_robotLeve()) {
 			speed_g = 0;
 			speed_d = 0;
 			right_motor_set_speed(speed_d);
@@ -110,6 +111,6 @@ static THD_FUNCTION(PiRegulator, arg) {
 }
 
 
-void pi_regulator_start(void){
-	chThdCreateStatic(waPiRegulator, sizeof(waPiRegulator), NORMALPRIO, PiRegulator, NULL);
+void gestionmoteurs_start(void){
+	chThdCreateStatic(waGestionMoteurs, sizeof(waGestionMoteurs), NORMALPRIO, GestionMoteurs, NULL);
 }

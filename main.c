@@ -21,11 +21,11 @@
 #include <sensors/imu.h>
 
 
-#include <pi_regulator.h>
 #include <process_image.h>
 #include <jeu.h>
 #include <capteur_ir.h>
 #include <accelerometer.h>
+#include "gestionmoteurs.h"
 
 messagebus_t bus;
 MUTEX_DECL(bus_lock);
@@ -86,14 +86,14 @@ int main(void)
 
 
 	//stars the threads for the pi regulator and the processing of the image
-	pi_regulator_start();
+	gestionmoteurs_start();
 	process_image_start();
 	jeu_start();
 	playMelodyStart();
 	capteur_ir_start();
 	//accelerometer_start();
 
-	//calibrate the ir capteurs
+	//calibration des périphériques
 	calibrate_ir();
 	calibrate_gyro();
 	calibrate_acc();

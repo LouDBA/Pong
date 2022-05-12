@@ -9,10 +9,10 @@
 
 #include <main.h>
 #include <motors.h>
-#include <pi_regulator.h>
 #include <process_image.h>
 #include <jeu.h>
 #include <accelerometer.h>
+#include "gestionmoteurs.h"
 // vérifier les include
 
 
@@ -29,7 +29,7 @@ static THD_FUNCTION(Jeu, arg) {
 	while(1){
 		time = chVTGetSystemTime();
 		// si on le lève il panique, réinitialise tout et allume toutes les LEDs en rouge
-		if(get_panique()) {
+		if(get_robotLeve()) {
 			score_rouge = 0;
 			set_scoreRed(score_rouge);
 			score_bleu = 0;
@@ -43,7 +43,7 @@ static THD_FUNCTION(Jeu, arg) {
 			set_rgb_led(LED6, 0,  0, 0);
 			set_rgb_led(LED8, 0,  0, 0);
 			//playMelody(SIMPSON, ML_FORCE_CHANGE, NULL);
-			while (get_panique()) {
+			while (get_robotLeve()) {
 				set_led(LED1, 2);
 				set_led(LED3, 2);
 				set_led(LED5, 2);
@@ -156,7 +156,6 @@ static THD_FUNCTION(Jeu, arg) {
 					toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);
 					toggle_rgb_led(LED6, BLUE_LED, RGB_MAX_INTENSITY);
 					toggle_rgb_led(LED8, BLUE_LED, RGB_MAX_INTENSITY);
-
 					chThdSleepMilliseconds(300);
 				}
 				score_rouge = 0;
