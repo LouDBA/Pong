@@ -15,13 +15,14 @@
 
 
 static bool panique = false;
-
+static float accelZStart = 0;
 
 void show_gravity(imu_msg_t *imu_values){
 	//create a pointer to the array for shorter name
 	float *accel = imu_values->acceleration;
-	chprintf((BaseSequentialStream *) &SD3, "z_accel : %d\r\n", accel[X_AXIS]);
-	if(fabs(accel[X_AXIS]) > THRESHOLD_IMU || fabs(accel[Y_AXIS]) > THRESHOLD_IMU){ //rajouter des define dans main.h
+	float random = accel[Z_AXIS];
+	//chprintf((BaseSequentialStream *) &SD3, "z_accel : %f\r\n",random );
+	if((fabs(accel[Z_AXIS]) < (GRAVITYG - THRESHOLD_IMU)) || (fabs(accel[Z_AXIS]) > (GRAVITYG + THRESHOLD_IMU))){ //rajouter des define dans main.h
 		panique = true;
 	} else {
 		panique = false;
@@ -38,16 +39,17 @@ static THD_FUNCTION(Accelerometer, arg) {
 	messagebus_topic_t *imu_topic = messagebus_find_topic_blocking(&bus, "/imu");
 	imu_msg_t imu_values;
 
-	//wait 2 sec to be sure the e-puck is in a stable position
-	chThdSleepMilliseconds(2000);
+	//wait 1 sec to be sure the e-puck is in a stable position
+	chThdSleepMilliseconds(1000);
+	//wait for new measures to be published
+	messagebus_topic_wait(imu_topic, &imu_values, sizeof(imu_values));
 
 	while(1){
 		time = chVTGetSystemTime();
 
-		//wait 2 sec to be sure the e-puck is in a stable position
-		chThdSleepMilliseconds(2000);
+		//wait 1 sec to be sure the e-puck is in a stable position
+		chThdSleepMilliseconds(1000);
 
-		//imu_compute_offset(imu_topic, NB_SAMPLES_OFFSET);
 		//wait for new measures to be published
 		messagebus_topic_wait(imu_topic, &imu_values, sizeof(imu_values));
 

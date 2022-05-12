@@ -43,32 +43,32 @@ static THD_FUNCTION(PiRegulator, arg) {
 				case GAUCHE_AV :
 					speed_g = MOTOR_SPEED_LIMIT;
 					speed_d = -MOTOR_SPEED_LIMIT;
-					rot_time = 325;
+					rot_time = 260;
 					break;
 				case DROIT_AV :
 					speed_g = -MOTOR_SPEED_LIMIT;
 					speed_d = MOTOR_SPEED_LIMIT;
-					rot_time = 325;
+					rot_time = 260;
 					break;
 				case GAUCHE_45 :
 					speed_g = MOTOR_SPEED_LIMIT;
 					speed_d = -MOTOR_SPEED_LIMIT;
-					rot_time = 250;
+					rot_time = 225;
 					break;
 				case DROIT_45 :
 					speed_g = -MOTOR_SPEED_LIMIT;
 					speed_d = MOTOR_SPEED_LIMIT;
-					rot_time = 250;
+					rot_time = 225;
 					break;
 				case GAUCHE :
 					speed_g = MOTOR_SPEED_LIMIT;
 					speed_d = -MOTOR_SPEED_LIMIT;
-					rot_time = 75;
+					rot_time = 50;
 					break;
 				case DROIT :
 					speed_g = -MOTOR_SPEED_LIMIT;
 					speed_d = MOTOR_SPEED_LIMIT;
-					rot_time = 75;
+					rot_time = 50;
 					break;
 				case GAUCHE_AR :
 					speed_g = MOTOR_SPEED_LIMIT;

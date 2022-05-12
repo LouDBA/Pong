@@ -91,12 +91,12 @@ int main(void)
 	jeu_start();
 	playMelodyStart();
 	capteur_ir_start();
-	accelerometer_start();
+	//accelerometer_start();
 
 	//calibrate the ir capteurs
 	calibrate_ir();
-
 	calibrate_gyro();
+	calibrate_acc();
 
 	/* Infinite loop. */
 	while (1) {
