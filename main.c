@@ -82,20 +82,16 @@ int main(void)
 	//start proximity sensors
 	proximity_start();
 
-
-
-
 	//starts all the threads used
 	gestionmoteurs_start();
 	process_image_start();
 	jeu_start();
-	playMelodyStart(); // thread de la librairie
 	capteur_ir_start();
 	accelerometer_start();
+	playMelodyStart(); // thread de la librairie
 
 	//calibration des périphériques
 	calibrate_ir();
-	calibrate_gyro();
 	calibrate_acc();
 
 	/* Infinite loop. */

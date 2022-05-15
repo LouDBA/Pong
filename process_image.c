@@ -9,6 +9,8 @@
 #include <process_image.h>
 #include <selector.h>
 
+#include <chprintf.h> //à enlever
+
 
 static float distance_fond_cm = 0;
 static uint8_t imageRed[IMAGE_BUFFER_SIZE] = {0};
@@ -16,7 +18,7 @@ static uint8_t imageBlue[IMAGE_BUFFER_SIZE] = {0};
 static uint8_t scoreRed = 0;
 static uint8_t scoreBlue = 0;
 static bool play = true;
-//static float last_distance_cm = 0;
+
 
 //semaphore
 static BSEMAPHORE_DECL(image_ready_sem, TRUE);
@@ -26,88 +28,52 @@ static BSEMAPHORE_DECL(image_ready_sem, TRUE);
  *  Returns 0 if line not found
  */
 uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
-	uint32_t width = 0;
-
-	uint32_t width1 = 0;
-	uint32_t width2 = 0;
-	uint32_t width3 = 0;
-
-	bool flancmontant = false;
-	bool flancdescendant = false;
-
-	bool bande = false;
-	bool firstbandeok = false;
-	bool secondbandeok = false;
+	uint32_t finalwidth = 0;
+	uint32_t actualcolorwidth = 0;
+	uint32_t actualwhitewidth = 0;
+	bool colorbande = false;
+	bool whitebande = false;
 
 	for(uint16_t i = 0 ; i < (IMAGE_BUFFER_SIZE - 1); ++i) {
-		if(firstbandeok == false){
-			if((bande == false) && (buffer[i] > mean) && (buffer[i+1] < mean)) { //détection des lignes de couleur
-				bande = true;
-				flancmontant = true;
-			}
-			if((bande == true) && (buffer[i] < mean)){
-				++width1;
-				if (buffer[i+1] > mean) {
-					bande = false;
-					flancdescendant = true;
-				}
-			}
-			if((bande == false) && (width1 < MIN_LINE_WIDTH)) {
-				width1 = 0;
-			}
-			if((bande == false) && (width1 > MIN_LINE_WIDTH)) {
-				firstbandeok = true;
-				width = width1;
-			}
-
-		} else {
-			if(secondbandeok == false){
-				if((bande == false) && (buffer[i] > mean) && (buffer[i+1] < mean)) { //détection des lignes de couleur
-					bande = true;
-				}
-				if((bande == true) && (buffer[i] < mean)){
-					++width2;
-					if (buffer[i+1] > mean) {
-						bande = false;
-					}
-				}
-				if((bande == false) && (width2 < MIN_LINE_WIDTH)) {
-					width2 = 0;
-				}
-				if((bande == false) && (width2 > MIN_LINE_WIDTH)) {
-					secondbandeok = true;
-					if(width2 > width) {
-						width = width2;
-					}
-				}
-			} else {
-				if((bande == false) && (buffer[i] > mean) && (buffer[i+1] < mean)) { //détection des lignes de couleur
-					bande = true;
-				}
-				if((bande == true) && (buffer[i] < mean)){
-					++width3;
-					if (buffer[i+1] > mean) {
-						bande = false;
-					}
-				}
-				if((bande == false) && (width2 < MIN_LINE_WIDTH)) {
-					width3 = 0;
-				}
-				if((bande == false) && (width2 > MIN_LINE_WIDTH)) {
-					if(width3 > width){
-						width = width3;
-					}
-				}
+		// regarde l'épaisseur de toutes les bandes de couleur
+		if((colorbande == false) && (buffer[i] > mean) && (buffer[i+1] < mean)) { //flanc descendant
+			colorbande = true;
+		}
+		if((colorbande == true) && (buffer[i] < mean)){
+			++actualcolorwidth;
+			if (buffer[i+1] > mean) { // flanc montant
+				colorbande = false;
 			}
 		}
+		if(colorbande == false) {
+			if((actualcolorwidth > finalwidth) && (actualcolorwidth > finalwidth)) {
+				finalwidth = actualcolorwidth;
+			}
+			actualcolorwidth = 0;
+		}
+
+		// regarde l'épaisseur de toutes les bandes blanches
+		if((whitebande == false) && (buffer[i] < mean) && (buffer[i+1] > mean)) { //flanc montant
+			whitebande = true;
+		}
+		if((whitebande == true) && (buffer[i] > mean)){
+			++actualwhitewidth;
+			if (buffer[i+1] < mean) { // flanc descendant
+				whitebande = false;
+			}
+		}
+		if(whitebande == false)  {
+			if((actualwhitewidth > finalwidth) && (actualwhitewidth > MIN_LINE_WIDTH)) {
+				finalwidth = actualwhitewidth;
+			}
+			actualwhitewidth = 0;
+		}
 	}
-	if(!flancdescendant || !flancmontant) {
-		width = 0;
-	}
-	if(width > MIN_LINE_WIDTH) {
-		return width;
+
+	if(finalwidth > MIN_LINE_WIDTH) {
+		return finalwidth;
 	}else {
-		return (PXTOCM/MAX_DISTANCE);
+		return MIN_LINE_WIDTH;
 	}
 }
 
@@ -156,7 +122,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 		for(uint16_t i = 0 ; i < (2 * IMAGE_BUFFER_SIZE) ; i+=2){
 			//extracts first 5bits of the first byte
 			//takes nothing from the second byte
-			imageRed[i/2] = (uint8_t)(img_buff_ptr[i]&0xF8)/8; //red pixels
+			imageRed[i/2] = (uint8_t)((img_buff_ptr[i]&0xF8)/8); //red pixels on décale de 3 pour avoir des valeurs entre 0 et 32 comme le bleu
 			//extracts last 5bits of the first byte
 			//takes nothing from the first byte
 			imageBlue[i/2] =  (uint8_t)img_buff_ptr[i+1]&0x1F; //blue
