@@ -21,13 +21,16 @@ extern "C" {
 #define PLATEAU_LENGTH			56 	// [cm]
 #define THRESHOLD_IMU			5.0f
 #define GRAVITYG				9.81f
+#define PETIT_ANGLE				50 //temps de sleep pour tourner du bon angle
+#define MOYEN_ANGLE				225
+#define GRAND_ANGLE				260
+#define SLEEP_DEMI_TOUR			700 //temps pour faire demi tour apres un point
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;
 
 extern parameter_namespace_t parameter_root;
 
-void SendUint8ToComputer(uint8_t* data, uint16_t size);
 #ifdef __cplusplus
 }
 #endif

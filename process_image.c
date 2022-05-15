@@ -1,16 +1,11 @@
 #include "ch.h"
 #include "hal.h"
-#include <chprintf.h>
 #include <usbcfg.h>
 
 #include <main.h>
 #include <camera/po8030.h>
-#include <chprintf.h>
 #include <process_image.h>
 #include <selector.h>
-
-#include <chprintf.h> //à enlever
-
 
 static float distance_fond_cm = 0;
 static uint8_t imageRed[IMAGE_BUFFER_SIZE] = {0};
@@ -27,7 +22,7 @@ static BSEMAPHORE_DECL(image_ready_sem, TRUE);
  *  Returns the line's width extracted from the image buffer given
  *  Returns 0 if line not found
  */
-uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
+uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){ //extrait l'epaisseur de la ligne la plus grosse qui est vue
 	uint32_t finalwidth = 0;
 	uint32_t actualcolorwidth = 0;
 	uint32_t actualwhitewidth = 0;
@@ -111,7 +106,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 	uint16_t lineWidth = 0;
 	uint32_t meanRed = 0;
 	uint32_t meanBlue = 0;
-	uint8_t sendtocomputer = 0;
+
 	while(1){
 		//waits until an image has been captured
 		chBSemWait(&image_ready_sem);
@@ -122,7 +117,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 		for(uint16_t i = 0 ; i < (2 * IMAGE_BUFFER_SIZE) ; i+=2){
 			//extracts first 5bits of the first byte
 			//takes nothing from the second byte
-			imageRed[i/2] = (uint8_t)((img_buff_ptr[i]&0xF8)/8); //red pixels on décale de 3 pour avoir des valeurs entre 0 et 32 comme le bleu
+			imageRed[i/2] = (uint8_t)(img_buff_ptr[i]&0xF8/8); //red pixels on décale de 3 pour avoir des valeurs entre 0 et 32 comme le bleu
 			//extracts last 5bits of the first byte
 			//takes nothing from the first byte
 			imageBlue[i/2] =  (uint8_t)img_buff_ptr[i+1]&0x1F; //blue
@@ -142,24 +137,7 @@ static THD_FUNCTION(ProcessImage, arg) {
 		} else {
 			lineWidth = extract_line_width(imageBlue, meanBlue);
 		}
-
-
 		distance_fond_cm = PXTOCM/lineWidth;
-//		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (last_distance_cm > GOAL_DISTANCE_FOND + 5)) {
-//			distance_fond_cm =+ 5;
-//		}
-//		last_distance_cm = distance_fond_cm;
-
-		if(sendtocomputer <2 ) {
-
-			++sendtocomputer;
-		}else {
-			//chprintf((BaseSequentialStream *) &SD3, "width : %d\r\n",lineWidth );
-			//chprintf((BaseSequentialStream *) &SD3, "distance : %f\r\n",distance_fond_cm );
-			SendUint8ToComputer(imageBlue, IMAGE_BUFFER_SIZE);
-			sendtocomputer = 0;
-		}
-
 
 
 		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true) && !(get_selector() & 1) ){

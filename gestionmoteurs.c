@@ -4,7 +4,6 @@
 #include "hal.h"
 #include <math.h>
 #include <usbcfg.h>
-#include <chprintf.h>
 
 
 #include <main.h>
@@ -44,32 +43,32 @@ static THD_FUNCTION(GestionMoteurs, arg) {
 				case GAUCHE_AV :
 					speed_g = SPEED_MAX;
 					speed_d = -SPEED_MAX;
-					rot_time = 260;
+					rot_time = GRAND_ANGLE;
 					break;
 				case DROIT_AV :
 					speed_g = -SPEED_MAX;
 					speed_d = SPEED_MAX;
-					rot_time = 260;
+					rot_time = GRAND_ANGLE;
 					break;
 				case GAUCHE_45 :
 					speed_g = SPEED_MAX;
 					speed_d = -SPEED_MAX;
-					rot_time = 225;
+					rot_time = MOYEN_ANGLE;
 					break;
 				case DROIT_45 :
 					speed_g = -SPEED_MAX;
 					speed_d = SPEED_MAX;
-					rot_time = 225;
+					rot_time = MOYEN_ANGLE;
 					break;
 				case GAUCHE :
 					speed_g = SPEED_MAX;
 					speed_d = -SPEED_MAX;
-					rot_time = 50;
+					rot_time = PETIT_ANGLE;
 					break;
 				case DROIT :
 					speed_g = -SPEED_MAX;
 					speed_d =SPEED_MAX;
-					rot_time = 50;
+					rot_time = PETIT_ANGLE;
 					break;
 				case GAUCHE_AR :
 					speed_g = SPEED_MAX;
@@ -94,10 +93,10 @@ static THD_FUNCTION(GestionMoteurs, arg) {
 			} else {
 				right_motor_set_speed(SPEED_MAX);
 				left_motor_set_speed(-SPEED_MAX);
-				chThdSleepMilliseconds(700); // le robot fait demi-tour
+				chThdSleepMilliseconds(SLEEP_DEMI_TOUR); // le robot fait demi-tour
 				right_motor_set_speed(0);
 				left_motor_set_speed(0);
-				chThdSleepMilliseconds(1000); // il marque un arrêt d'une seconde avant de repartir
+				chThdSleepMilliseconds(2 * SLEEP_DEMI_TOUR); // il marque un arrêt d'une seconde avant de repartir
 				set_play(true);
 			}
 		}
