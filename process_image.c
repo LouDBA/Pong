@@ -7,6 +7,7 @@
 #include <camera/po8030.h>
 #include <chprintf.h>
 #include <process_image.h>
+#include <selector.h>
 
 
 static float distance_fond_cm = 0;
@@ -15,7 +16,7 @@ static uint8_t imageBlue[IMAGE_BUFFER_SIZE] = {0};
 static uint8_t scoreRed = 0;
 static uint8_t scoreBlue = 0;
 static bool play = true;
-static float last_distance_cm = 0;
+//static float last_distance_cm = 0;
 
 //semaphore
 static BSEMAPHORE_DECL(image_ready_sem, TRUE);
@@ -26,10 +27,10 @@ static BSEMAPHORE_DECL(image_ready_sem, TRUE);
  */
 uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	uint32_t width = 0;
+
 	uint32_t width1 = 0;
 	uint32_t width2 = 0;
 	uint32_t width3 = 0;
-	//uint32_t colorvalue = 0;
 
 	bool flancmontant = false;
 	bool flancdescendant = false;
@@ -38,7 +39,7 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	bool firstbandeok = false;
 	bool secondbandeok = false;
 
-	for(int i = 0; i < (IMAGE_BUFFER_SIZE - 1); ++i) {
+	for(uint16_t i = 0 ; i < (IMAGE_BUFFER_SIZE - 1); ++i) {
 		if(firstbandeok == false){
 			if((bande == false) && (buffer[i] > mean) && (buffer[i+1] < mean)) { //détection des lignes de couleur
 				bande = true;
@@ -58,7 +59,7 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 				firstbandeok = true;
 				width = width1;
 			}
-			//width = width1;
+
 		} else {
 			if(secondbandeok == false){
 				if((bande == false) && (buffer[i] > mean) && (buffer[i+1] < mean)) { //détection des lignes de couleur
@@ -110,113 +111,6 @@ uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){
 	}
 }
 
-//	uint32_t width = 0;
-//	uint16_t debut_haut = 0, debut_bas = 0, ecart = 0;
-//	bool haut = false, bas = false;
-//
-//	for(unsigned int i = 0; i < IMAGE_BUFFER_SIZE ; ++i)
-//	{
-//		if((buffer[i] > (mean * 3/2)) && (!haut))
-//		{
-//			debut_haut = i;
-//			if(bas)
-//			{
-//				ecart = i - debut_haut;
-//			}
-//			haut = true;
-//			bas = false;
-//		} else if((buffer[i] < (mean / 2)) && (!bas)) {
-//			debut_bas = i;
-//			if(haut)
-//			{
-//				ecart = i - debut_haut;
-//			}
-//			haut = false;
-//			bas = true;
-//		} else {
-//			bas = haut = false;
-//		}
-//
-//		if(ecart > width)
-//		{
-//			width = ecart;
-//		}
-//
-//	}
-//
-//	if(width < MIN_LINE_WIDTH){
-//		width = PXTOCM/MAX_DISTANCE;
-//	}
-//	//chprintf((BaseSequentialStream *)&SD3, "%6u \r\n", (uint32_t)width);
-//	return width;
-//}
-
-
-//	do{
-//		wrong_line = 0;
-//		//search for a begin
-//		while(stop == 0 && i < (IMAGE_BUFFER_SIZE - WIDTH_SLOPE))
-//		{
-//			//the slope must at least be WIDTH_SLOPE wide and is compared
-//			//to the mean of the image
-//			if(buffer[i] > mean && buffer[i+WIDTH_SLOPE] < mean)
-//			{
-//				begin = i;
-//				colorvalue = buffer[i];
-//				stop = 1;
-//			}
-//			i++;
-//		}
-//		//if a begin was found, search for an end
-//		if (i < (IMAGE_BUFFER_SIZE - WIDTH_SLOPE) && begin)
-//		{
-//			stop = 0;
-//
-//			while(stop == 0 && i < IMAGE_BUFFER_SIZE)
-//			{
-//				if(buffer[i] > mean && buffer[i-WIDTH_SLOPE] < mean)
-//				{
-//					end = i;
-//					stop = 1;
-//				}
-//				i++;
-//			}
-//			//if an end was not found
-//			if (i > IMAGE_BUFFER_SIZE || !end)
-//			{
-//				line_not_found = 1;
-//			}
-//		}
-//		else//if no begin was found
-//		{
-//			line_not_found = 1;
-//		}
-//
-//		//if a line too small has been detected, continues the search
-//		if(!line_not_found && (end-begin) < MIN_LINE_WIDTH){
-//			i = end;
-//			begin = 0;
-//			end = 0;
-//			stop = 0;
-//			wrong_line = 1;
-//		}
-//	}while(wrong_line);
-//
-//	if(line_not_found){
-//		begin = 0;
-//		end = 0;
-//		width = PXTOCM/MAX_DISTANCE;
-//	}else{
-//		width = (end - begin);
-//	}
-//
-//	//sets a maximum width or returns the measured width
-//	if((PXTOCM/width) >= MAX_DISTANCE){
-//		return PXTOCM/MAX_DISTANCE;
-//	}else{
-//		return width;
-//	}
-
 
 static THD_WORKING_AREA(waCaptureImage, 256);
 static THD_FUNCTION(CaptureImage, arg) {
@@ -251,7 +145,6 @@ static THD_FUNCTION(ProcessImage, arg) {
 	uint16_t lineWidth = 0;
 	uint32_t meanRed = 0;
 	uint32_t meanBlue = 0;
-	//bool sendtocomputer = true;
 	uint8_t sendtocomputer = 0;
 	while(1){
 		//waits until an image has been captured
@@ -286,26 +179,24 @@ static THD_FUNCTION(ProcessImage, arg) {
 
 
 		distance_fond_cm = PXTOCM/lineWidth;
-		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (last_distance_cm > GOAL_DISTANCE_FOND + 5)) {
-			distance_fond_cm =+ 5;
-		}
-		last_distance_cm = distance_fond_cm;
-		//distance_fond_cm = last_distance;
-		//}
-		//last_distance = PXTOCM/lineWidth;
+//		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (last_distance_cm > GOAL_DISTANCE_FOND + 5)) {
+//			distance_fond_cm =+ 5;
+//		}
+//		last_distance_cm = distance_fond_cm;
+
 		if(sendtocomputer <2 ) {
 
 			++sendtocomputer;
 		}else {
-			chprintf((BaseSequentialStream *) &SD3, "width : %d\r\n",lineWidth );
-			chprintf((BaseSequentialStream *) &SD3, "distance : %f\r\n",distance_fond_cm );
-			//SendUint8ToComputer(imageBlue, IMAGE_BUFFER_SIZE);
+			//chprintf((BaseSequentialStream *) &SD3, "width : %d\r\n",lineWidth );
+			//chprintf((BaseSequentialStream *) &SD3, "distance : %f\r\n",distance_fond_cm );
+			SendUint8ToComputer(imageBlue, IMAGE_BUFFER_SIZE);
 			sendtocomputer = 0;
 		}
 
 
 
-		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true)){
+		if((distance_fond_cm < GOAL_DISTANCE_FOND) && (play == true) && !(get_selector() & 1) ){
 			if(meanRed < meanBlue) {
 				++scoreRed;
 				play = false;

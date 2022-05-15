@@ -6,23 +6,18 @@
 
 
 #include <main.h>
-#include <process_image.h>
-#include <capteur_ir.h>
-#include <sensors/imu.h>
 
-#include <chprintf.h>
-#include "gestionmoteurs.h"
+#include <sensors/imu.h>
 
 
 static bool robotLeve = false;
-static float accelZStart = 0;
 
 void show_gravity(imu_msg_t *imu_values){
 	//create a pointer to the array for shorter name
 	float *accel = imu_values->acceleration;
 	float random = accel[Z_AXIS];
 	//chprintf((BaseSequentialStream *) &SD3, "z_accel : %f\r\n",random );
-	if((fabs(accel[Z_AXIS]) < (GRAVITYG - THRESHOLD_IMU)) || (fabs(accel[Z_AXIS]) > (GRAVITYG + THRESHOLD_IMU))){ //rajouter des define dans main.h
+	if((accel[Z_AXIS] < (- GRAVITYG - THRESHOLD_IMU)) || (accel[Z_AXIS] > (- GRAVITYG + THRESHOLD_IMU))){
 		robotLeve = true;
 	} else {
 		robotLeve = false;

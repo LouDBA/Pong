@@ -19,7 +19,7 @@
 #include <audio/audio_thread.h>
 #include <audio/play_melody.h>
 #include <sensors/imu.h>
-
+#include <selector.h>
 
 #include <process_image.h>
 #include <jeu.h>
@@ -85,13 +85,13 @@ int main(void)
 
 
 
-	//stars the threads for the pi regulator and the processing of the image
+	//starts all the threads used
 	gestionmoteurs_start();
 	process_image_start();
 	jeu_start();
-	playMelodyStart();
+	playMelodyStart(); // thread de la librairie
 	capteur_ir_start();
-	//accelerometer_start();
+	accelerometer_start();
 
 	//calibration des périphériques
 	calibrate_ir();

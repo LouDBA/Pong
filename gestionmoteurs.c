@@ -12,8 +12,9 @@
 #include <process_image.h>
 #include <capteur_ir.h>
 #include <accelerometer.h>
+#include <selector.h>
 
-//gestion de la vitesse (de la caméra et autre fonction pour les capteurs ou tout dans celle la ?)
+//gestion de la vitesse des moteurs
 
 static THD_WORKING_AREA(waGestionMoteurs, 512);
 static THD_FUNCTION(GestionMoteurs, arg) {
@@ -29,8 +30,7 @@ static THD_FUNCTION(GestionMoteurs, arg) {
 	while(1){
 		time = chVTGetSystemTime();
 
-		//computes the speed to give to the motors
-		if(get_robotLeve()) {
+		if((get_robotLeve()) || (get_selector() & 1) ) {
 			speed_g = 0;
 			speed_d = 0;
 			right_motor_set_speed(speed_d);
@@ -97,12 +97,12 @@ static THD_FUNCTION(GestionMoteurs, arg) {
 				speed_d = -MOTOR_SPEED_LIMIT;
 				right_motor_set_speed(speed_d);
 				left_motor_set_speed(speed_g);
-				chThdSleepMilliseconds(600);
+				chThdSleepMilliseconds(900); // le robot fait demi-tour
 				speed_g = 0;
 				speed_d = 0;
 				right_motor_set_speed(speed_d);
 				left_motor_set_speed(speed_g);
-				chThdSleepMilliseconds(300);
+				chThdSleepMilliseconds(1000); // il marque un arrêt d'une seconde avant de repartir
 				set_play(true);
 			}
 		}

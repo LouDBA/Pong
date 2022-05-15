@@ -12,8 +12,8 @@
 #include <process_image.h>
 #include <jeu.h>
 #include <accelerometer.h>
-#include "gestionmoteurs.h"
-// vérifier les include
+
+// gestion des LEDs et du son
 
 
 static THD_WORKING_AREA(waJeu, 256); // vérifier la taille de la mémoire allouée
@@ -150,6 +150,8 @@ static THD_FUNCTION(Jeu, arg) {
 				set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
 				set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
 				set_rgb_led(LED8, 0, 0, RGB_MAX_INTENSITY);
+				//playNote(NOTE_A4  , 300);
+				//playNote(NOTE_B1  , 500);
 				//playMelody(MARIO, ML_FORCE_CHANGE, NULL);
 				for(int i = 0 ; i < 7 ; ++i){
 					toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);

@@ -17,13 +17,12 @@ extern "C" {
 #define SPEED_MIN				640.0f
 #define SPEED_MAX				1100.0f
 #define PXTOCM					1570.0f //experimental value
-#define GOAL_DISTANCE_FOND		8.0f	// [cm]
+#define GOAL_DISTANCE_FOND		7.0f	// [cm]
 #define MAX_DISTANCE 			30.0f	// [cm]
 #define IR_DETECT_VALUE			512		// valeur a laquelle les capteur se triggers
 #define PLATEAU_LENGTH			56 	// [cm]
-#define THRESHOLDBANDES			4	// [cm]
-#define THRESHOLD_IMU			1.0f
-#define GRAVITYG				19.5f
+#define THRESHOLD_IMU			4.0f
+#define GRAVITYG				9.81f
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;
