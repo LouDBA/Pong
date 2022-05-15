@@ -5,13 +5,13 @@
 #include "ch.h"
 #include "hal.h"
 #include "memory_protection.h"
+#include "leds.h"
 
 
 #include <usbcfg.h>
 #include <main.h>
 #include <motors.h>
 #include <camera/po8030.h>
-#include <chprintf.h>
 #include <sensors/proximity.h>
 #include <msgbus/messagebus.h>
 #include <i2c_bus.h>
@@ -25,7 +25,7 @@
 #include <jeu.h>
 #include <capteur_ir.h>
 #include <accelerometer.h>
-#include "gestionmoteurs.h"
+#include <gestionmoteurs.h>
 
 messagebus_t bus;
 MUTEX_DECL(bus_lock);

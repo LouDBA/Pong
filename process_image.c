@@ -1,6 +1,5 @@
 #include "ch.h"
 #include "hal.h"
-#include <usbcfg.h>
 
 #include <main.h>
 #include <camera/po8030.h>
@@ -20,7 +19,6 @@ static BSEMAPHORE_DECL(image_ready_sem, TRUE);
 
 /*
  *  Returns the line's width extracted from the image buffer given
- *  Returns 0 if line not found
  */
 uint16_t extract_line_width(uint8_t *buffer, uint32_t mean){ //extrait l'epaisseur de la ligne la plus grosse qui est vue
 	uint32_t finalwidth = 0;
@@ -153,9 +151,6 @@ static THD_FUNCTION(ProcessImage, arg) {
 }
 
 
-float get_distance_fond_cm(void){
-	return distance_fond_cm;
-}
 
 uint8_t get_scoreRed(void){
 	return scoreRed;

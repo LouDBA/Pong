@@ -1,6 +1,5 @@
 #include "ch.h"
 #include "hal.h"
-#include <usbcfg.h>
 #include <math.h>
 
 

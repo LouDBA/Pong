@@ -1,9 +1,7 @@
-#include "gestionmoteurs.h"
 
 #include "ch.h"
 #include "hal.h"
 #include <math.h>
-#include <usbcfg.h>
 
 
 #include <main.h>
@@ -12,7 +10,7 @@
 #include <capteur_ir.h>
 #include <accelerometer.h>
 #include <selector.h>
-
+#include <gestionmoteurs.h>
 //gestion de la vitesse des moteurs
 
 static THD_WORKING_AREA(waGestionMoteurs, 512);

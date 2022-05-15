@@ -2,21 +2,18 @@
 #include "hal.h"
 #include "leds.h"
 #include <audio/play_melody.h>
-#include <math.h>
-#include <usbcfg.h>
-#include <chprintf.h>
 
 
 #include <main.h>
-#include <motors.h>
 #include <process_image.h>
 #include <jeu.h>
 #include <accelerometer.h>
 
+
 // gestion des LEDs et du son
 
 
-static THD_WORKING_AREA(waJeu, 256); // vérifier la taille de la mémoire allouée
+static THD_WORKING_AREA(waJeu, 256);
 static THD_FUNCTION(Jeu, arg) {
 
 	chRegSetThreadName(__FUNCTION__);
@@ -42,22 +39,25 @@ static THD_FUNCTION(Jeu, arg) {
 			set_rgb_led(LED4, 0,  0, 0);
 			set_rgb_led(LED6, 0,  0, 0);
 			set_rgb_led(LED8, 0,  0, 0);
-			//playMelody(SIMPSON, ML_FORCE_CHANGE, NULL);
 			while (get_robotLeve()) {
-				set_led(LED1, 2);
-				set_led(LED3, 2);
-				set_led(LED5, 2);
-				set_led(LED7, 2);
+				set_led(LED1, VALUEFORTOGGLE);
+				set_led(LED3, VALUEFORTOGGLE);
+				set_led(LED5, VALUEFORTOGGLE);
+				set_led(LED7, VALUEFORTOGGLE);
 				toggle_rgb_led(LED2, RED_LED, RGB_MAX_INTENSITY);
 				toggle_rgb_led(LED4, RED_LED, RGB_MAX_INTENSITY);
 				toggle_rgb_led(LED6, RED_LED, RGB_MAX_INTENSITY);
 				toggle_rgb_led(LED8, RED_LED, RGB_MAX_INTENSITY);
-				chThdSleepMilliseconds(300);
+				chThdSleepMilliseconds(BLINKINGTIME);
 			}
-			//stopCurrentMelody();
 			set_play(true);
 
 		} else {
+			if(!get_play()) {
+				playNote(NOTE_A4  , TIMEFIRSTNOTE);
+				playNote(NOTE_B4  , TIMESECONDNOTE);
+				chThdSleepMilliseconds(2 * SLEEP_DEMI_TOUR);
+			}
 			score_rouge = get_scoreRed();
 			score_bleu = get_scoreBlue();
 
@@ -96,13 +96,12 @@ static THD_FUNCTION(Jeu, arg) {
 				set_led(LED3, 1);
 				set_led(LED5, 1);
 				set_led(LED7, 1);
-				//playMelody(MARIO_START, ML_FORCE_CHANGE, NULL);
-				for(int i = 0 ; i < 7 ; ++i){
-					set_led(LED1, 2);
-					set_led(LED3, 2);
-					set_led(LED5, 2);
-					set_led(LED7, 2);
-					chThdSleepMilliseconds(300);
+				for(int i = 0 ; i < NUMBEROFBLINKING ; ++i){
+					set_led(LED1, VALUEFORTOGGLE);
+					set_led(LED3, VALUEFORTOGGLE);
+					set_led(LED5, VALUEFORTOGGLE);
+					set_led(LED7, VALUEFORTOGGLE);
+					chThdSleepMilliseconds(BLINKINGTIME);
 				}
 				score_rouge = 0;
 				set_scoreRed(score_rouge);
@@ -150,15 +149,12 @@ static THD_FUNCTION(Jeu, arg) {
 				set_rgb_led(LED4, 0, 0, RGB_MAX_INTENSITY);
 				set_rgb_led(LED6, 0, 0, RGB_MAX_INTENSITY);
 				set_rgb_led(LED8, 0, 0, RGB_MAX_INTENSITY);
-				//playNote(NOTE_A4  , 300);
-				//playNote(NOTE_B1  , 500);
-				//playMelody(MARIO, ML_FORCE_CHANGE, NULL);
-				for(int i = 0 ; i < 7 ; ++i){
+				for(int i = 0 ; i < NUMBEROFBLINKING ; ++i){
 					toggle_rgb_led(LED2, BLUE_LED, RGB_MAX_INTENSITY);
 					toggle_rgb_led(LED4, BLUE_LED, RGB_MAX_INTENSITY);
 					toggle_rgb_led(LED6, BLUE_LED, RGB_MAX_INTENSITY);
 					toggle_rgb_led(LED8, BLUE_LED, RGB_MAX_INTENSITY);
-					chThdSleepMilliseconds(300);
+					chThdSleepMilliseconds(BLINKINGTIME);
 				}
 				score_rouge = 0;
 				set_scoreRed(score_rouge);
@@ -166,7 +162,6 @@ static THD_FUNCTION(Jeu, arg) {
 				set_scoreBlue(score_bleu);
 				break;
 
-				// operator doesn't match any case
 			default:
 				score_bleu = 0;
 				set_scoreBlue(score_bleu);
